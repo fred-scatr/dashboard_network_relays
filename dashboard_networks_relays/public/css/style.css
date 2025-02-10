@@ -1,0 +1,67 @@
+/* Default Light Mode */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --primary-color: #007bff;
+    --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
+    --svg-color: black;
+    
+}
+
+/* Dark Mode */
+.dark-mode {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --primary-color: #1e90ff;
+    --Neutrals-color-bg25: rgba(255, 255, 255, 0.25);
+    --svg-color: #19A4DA;
+}
+
+/* Apply Variables */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Example button styling */
+button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.network_frame{
+    height: 32px;
+    border: 2px;
+    align-self: stretch;    
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-left: 5px;
+}
+.svg_lucide_network {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    background-image: url('/images/svg_lucide_network.svg');
+    fill: var(--svg-color); 
+    /*background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; */
+}  
+
+.dark-mode .svg_lucide_network {
+    fill: red !important; /* ✅ Test if the SVG changes color */
+}
+
+.rectangle_line {
+    width: 1160px;
+    height: 1px;
+    border: 1px solid var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));
+    background: var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));
+}
