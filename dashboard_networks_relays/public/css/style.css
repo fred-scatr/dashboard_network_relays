@@ -46,6 +46,19 @@ button {
     align-items: center;
     padding-left: 5px;
 }
+.network_name{
+    color:  var(--text-color); /*var(--Neutrals-color-bg, #000);*/
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+}
+
 .svg_lucide_network {
     width: 16px;
     height: 16px;
