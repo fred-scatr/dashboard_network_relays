@@ -1,3 +1,7 @@
+let arrayNetworkDivs = [];
+
+create_networks_table();
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const toggleButton = document.getElementById("theme-toggle");
@@ -22,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove("dark-mode");
             void document.body.offsetWidth; // ✅ Forces repaint
             document.body.classList.add("dark-mode");
-            create_networks_table();
 
         } else {
             localStorage.setItem("theme", "light");
@@ -32,9 +35,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+(function() {
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function(eventType, listener, options) {
+        if (!this.eventListenerList) {
+            this.eventListenerList = {};
+        }
+        if (!this.eventListenerList[eventType]) {
+            this.eventListenerList[eventType] = [];
+        }
+        this.eventListenerList[eventType].push(listener);
+        console.log(`Event '${eventType}' added to`, this);
+        
+        // Call the original addEventListener
+        originalAddEventListener.call(this, eventType, listener, options);
+    };
+})();
+
+function customNameButtonClicked(buttonInfo){
+    // remove button and replace with a Custom name input box
+    console.log("button clicked: ", buttonInfo);
+    button = document.getElementById(buttonInfo);
+    // get index of button so we can get the index of the network div (customNameText15 is format)
+    index = buttonInfo.split('Text')[1];
+    console.log("index:", index);    
+    networkDiv = document.getElementById(arrayNetworkDivs[index]);
+    document.getElementById(buttonInfo).remove();
+}
+
 function renderTable(networks){
     // create array of divs, each one a separate network
-    let arrayNetworkDivs = [];
+
     try{
         for(let i=0;i<networks.length;i++){    
             arrayNetworkDivs[i] = document.createElement("div");
@@ -42,12 +73,12 @@ function renderTable(networks){
             arrayNetworkDivs[i].classList.add("network_frame");
 
             svg_element = `<svg class="svg_lucide_network" width="16" height="16"  viewBox="0 0 16 16">
-            <g clip-path="url(#clip0_6_109)">
+            <g fill="None" clip-path="url(#clip0_6_109)">
                     <path  d="M3.33337 10.6663V8.66634C3.33337 8.48953 3.40361 8.31996 3.52864 8.19494C3.65366 8.06991 3.82323 7.99967 4.00004 7.99967H12C12.1769 7.99967 12.3464 8.06991 12.4714 8.19494C12.5965 8.31996 12.6667 8.48953 12.6667 8.66634V10.6663M8.00004 7.99967V5.33301M11.3334 10.6663H14C14.3682 10.6663 14.6667 10.9648 14.6667 11.333V13.9997C14.6667 14.3679 14.3682 14.6663 14 14.6663H11.3334C10.9652 14.6663 10.6667 14.3679 10.6667 13.9997V11.333C10.6667 10.9648 10.9652 10.6663 11.3334 10.6663ZM2.00004 10.6663H4.66671C5.0349 10.6663 5.33337 10.9648 5.33337 11.333V13.9997C5.33337 14.3679 5.0349 14.6663 4.66671 14.6663H2.00004C1.63185 14.6663 1.33337 14.3679 1.33337 13.9997V11.333C1.33337 10.9648 1.63185 10.6663 2.00004 10.6663ZM6.66671 1.33301H9.33337C9.70156 1.33301 10 1.63148 10 1.99967V4.66634C10 5.03453 9.70156 5.33301 9.33337 5.33301H6.66671C6.29852 5.33301 6.00004 5.03453 6.00004 4.66634V1.99967C6.00004 1.63148 6.29852 1.33301 6.66671 1.33301Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
                 </g>
                 <defs>
                     <clipPath id="clip0_6_109">
-                    <rect width="16" height="16"  fill="currentColor"  />
+                    <rect width="16" height="16"  fill="None"  />
                     </clipPath>
                 </defs>
                 </svg>`;
@@ -68,6 +99,26 @@ function renderTable(networks){
 
             /*console.log("networks[i], ", networks[i]['network'], `<span class="network_name">` + networks[i]['network'] + `</span>`);*/
             svg_container.insertAdjacentHTML("beforeend", `<span class="network_name">${networks[i]['network']}</span>`); 
+
+            // insert container for Custom Name
+            customNameButton = document.createElement("button");
+            customNameButton.id = "customNameText" + i;
+            customNameButton.classList.add("custom_name");
+            customNameButton.textContent = "Custom Name";
+            customNameButton.enabled = true;
+            customNameButton.addEventListener("click", () => customNameButtonClicked(customNameButton.id));
+            console.log("customNameText: ", customNameButton, customNameButton.id);
+            svg_container.insertAdjacentElement("beforeend", customNameButton);
+            //svg_container.insertAdjacentHTML("beforeend", `<span class="custom_name">Custom Name</span>`); 
+            /*containerCustomName = document.createElement("div");
+            containerCustomName.id = "containerCustomName";
+            containerCustomName.classList.add("container_custom_name"); */
+            /*console.log("networks[i], ", networks[i]['network'], `<span class="network_name">` + networks[i]['network'] + `</span>`);*/
+            //svg_container.insertAdjacentElement("beforeend", containerCustomName); 
+            const childElements = svg_container.children;
+            console.log(childElements);
+            console.log("added Custom Name");
+
 
             rect = `<div class="rectangle_line"></div>`
             svg_container.insertAdjacentHTML("afterend",rect);

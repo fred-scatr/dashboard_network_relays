@@ -1,10 +1,10 @@
 /* Default Light Mode */
 :root {
     --bg-color: #ffffff;
-    --text-color: #000000;
+    --text-color: #38C7FF;
     --primary-color: #007bff;
     --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
-    --svg-color: black;
+    --svg-color: #38C7FF;
     --svg-fill: none;     /* Ensure no fill in light mode */
     
 }
@@ -12,13 +12,18 @@
 /* Dark Mode */
 .dark-mode {
     --bg-color: #121212;
-    --text-color: #ffffff;
-    --primary-color: #1e90ff;
+    --text-color: #19A4DA;
+    --primary-color: #19A4DA;
     --Neutrals-color-bg25: rgba(255, 255, 255, 0.25);
     --svg-color: #19A4DA;
     --svg-fill: none;     /* Ensure no fill in light mode */
 }
 
+.network_frame:hover{
+    background-color: #38C7FF;
+    --text-color: #121212;
+    --svg-color: #121212;
+}
 /* Apply Variables */
 body {
     background-color: var(--bg-color);
@@ -29,7 +34,7 @@ body {
 
 /* Example button styling */
 button {
-    background-color: var(--primary-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
     padding: 10px 20px;
     border: none;
@@ -45,7 +50,10 @@ button {
     justify-content: left;
     align-items: center;
     padding-left: 5px;
+    position: relative;
 }
+
+
 .network_name{
     color:  var(--text-color); /*var(--Neutrals-color-bg, #000);*/
     font-feature-settings: 'liga' off, 'clig' off;
@@ -57,6 +65,50 @@ button {
     font-style: normal;
     font-weight: 500;
     line-height: 16px; /* 133.333% */
+}
+.container_custom_name{
+    position: absolute;
+    left: 182px;  /* ✅ Positions the div itself, not the text inside */
+    font-size: 12px;
+    background-color: var(--bg-color);
+    border: 0px solid var(--bg-color);
+    width: 217px;
+    height: 32px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*color:  var(--text-color); /*var(--Neutrals-color-bg, #000);
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;*/
+}
+
+.container_custom_name:hover{
+    background-color: #38C7FF;
+    --text-color: #121212;
+    --svg-color: #121212;
+}
+
+.custom_name{
+    color:  var(--text-color); /*var(--Neutrals-color-bg, #000);*/
+    background: rgba(24, 100, 171, 0.0);
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 182px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+}
+.custom_name:hover{
+    background-color: rgba(24, 100, 171, 0.0);
 }
 
 .svg_lucide_network {
