@@ -70,17 +70,17 @@ button {
     position: absolute;
     left: 182px;  /* ✅ Positions the div itself, not the text inside */
     font-size: 12px;
-    background-color: var(--bg-color);
-    border: 0px solid var(--bg-color);
+    background-color: rgba(24, 100, 171, 0.0);
+    border: 0px solid white;
     width: 217px;
-    height: 32px;
+    height: 28px;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     /*color:  var(--text-color); /*var(--Neutrals-color-bg, #000);
-    font-feature-settings: 'liga' off, 'clig' off;
-    padding: 12px;*/
+    font-feature-settings: 'liga' off, 'clig' off; */
+    /*padding: 12px;*/
 }
 
 .container_custom_name:hover{
@@ -109,6 +109,16 @@ button {
 }
 .custom_name:hover{
     background-color: rgba(24, 100, 171, 0.0);
+    color:  var(--text-color);
+}
+.custom_name_input_box{
+    background-color: #38ff63;
+    color: black;
+    border-radius: 4px;
+    position: absolute;
+    height: 16px;
+    width: 82px;
+    left: 5px; 
 }
 
 .svg_lucide_network {

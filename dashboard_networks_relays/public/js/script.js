@@ -45,22 +45,132 @@ document.addEventListener("DOMContentLoaded", () => {
             this.eventListenerList[eventType] = [];
         }
         this.eventListenerList[eventType].push(listener);
-        console.log(`Event '${eventType}' added to`, this);
+        //console.log(`Event '${eventType}' added to`, this);
         
         // Call the original addEventListener
         originalAddEventListener.call(this, eventType, listener, options);
     };
 })();
 
-function customNameButtonClicked(buttonInfo){
+function removeAllButtonListeners(){        // remove the listeners from the Buttons in the network divs 
+    const allDivs = document.querySelectorAll('div');
+    const theDivs = Array.from(allDivs).map(div => div);
+    const divIds = Array.from(allDivs).map(div => div.id); // get array of all divs
+    console.log(divIds);
+
+    for(let i=0;i<theDivs.length;i++){
+        if(theDivs[i].id.includes('arrayNetworkDivs')){  // only get divs that are network Divs
+            const theButton = theDivs[i].querySelectorAll(':scope > button');
+            //console.log("theButton", theButton[0], theButton.length);
+            if(theButton.length > 0){
+                //console.log("Removing from:", theButton);
+                theButton[0].removeEventListener("dblclick", handleNameButtonClick);
+            }
+        }
+    }
+}
+
+function addAllButtonListeners(){
+    const allDivs = document.querySelectorAll('div');
+    const theDivs = Array.from(allDivs).map(div => div);
+    const divIds = Array.from(allDivs).map(div => div.id); // get array of all divs
+    console.log(divIds);
+
+    for(let i=0;i<theDivs.length;i++){
+        if(theDivs[i].id.includes('arrayNetworkDivs')){  // only get divs that are network Divs
+            const theButton = theDivs[i].querySelectorAll(':scope > button');
+            //console.log("theButton", theButton[0], theButton.length);
+            if(theButton.length > 0){
+                //console.log("Removing from:", theButton);
+                theButton[0].addEventListener("dblclick", handleNameButtonClick);
+            }
+        }
+    }
+}
+
+const handleNameButtonClick = (event) => {
+    console.log("handleNameButtonClick");
+    customNameButtonClicked(event.target.id, event);
+};
+
+
+function customNameButtonClicked (buttonInfo, event){
+
     // remove button and replace with a Custom name input box
-    console.log("button clicked: ", buttonInfo);
+    console.log("customNameButtonClicked", "button clicked: ", buttonInfo);
     button = document.getElementById(buttonInfo);
+
     // get index of button so we can get the index of the network div (customNameText15 is format)
     index = buttonInfo.split('Text')[1];
-    console.log("index:", index);    
-    networkDiv = document.getElementById(arrayNetworkDivs[index]);
-    document.getElementById(buttonInfo).remove();
+    
+    // get the div that this button is located in by the id of the button;     
+    networkDiv = document.getElementById(arrayNetworkDivs[index].id);
+    //networkDiv.style.setProperty("background-color",  "#38C7FF");
+
+    console.log("index:", index, "event:", event, "networkDiv:", arrayNetworkDivs[index].id);
+    // remove the button, to be replaced by an div tag and input box
+    theButtonToRemove = networkDiv.querySelectorAll(':scope > button');
+    console.log("theButtonToRemove", theButtonToRemove);
+    theButtonToRemove[0].remove();
+
+    containerInputBox = document.createElement("div");
+    containerInputBox.id = "containerInputBox";
+    containerInputBox.classList.add("container_custom_name");
+    networkDiv.insertAdjacentElement("beforeend" , containerInputBox);
+
+    inputBox = document.createElement("input");
+    inputBox.id = "inputBox" + index;
+    inputBox.classList.add("custom_name_input_box");
+    inputBox.type = "text";
+    console.log("networkDiv:", networkDiv);
+    containerInputBox.insertAdjacentElement("beforeend", inputBox);
+
+
+    removeAllButtonListeners();    // remove all button listeners until this button custom name change is complete.
+
+    //if(hasFocus){
+        inputBox.addEventListener('keydown', (event) => {
+            // Check if the pressed key is Enter
+            if (event.key === 'Enter') {
+                // Get the value of the input box
+                const inputValue = event.target.value;
+                console.log('Input value:', inputValue);  
+                const hasFocus = inputBox === document.activeElement;
+                if(inputValue != '' ){
+                    // remove the container for the input box and replace with the new button and Custom Name 
+                    event.target.value = '';
+                    let customNameButton = document.createElement("button");
+                    customNameButton.id = "customNameText" + index;
+                    customNameButton.classList.add("custom_name");
+                    customNameButton.textContent = inputValue;
+                    customNameButton.enabled = true;
+                    customNameButton.addEventListener("dblclick", handleNameButtonClick);
+                    console.log("customNameText: ", customNameButton, customNameButton.id);
+                    networkDiv.insertAdjacentElement("beforeend", customNameButton);
+                    const childElements = arrayNetworkDivs[index].children;
+                    console.log(childElements);
+                    
+                    containerInputBox.remove();
+
+                }else{
+                    event.target.value = '';
+                    let customNameButton = document.createElement("button");
+                    customNameButton.id = "customNameText" + index;
+                    customNameButton.classList.add("custom_name");
+                    customNameButton.textContent = "Custom Name";
+                    customNameButton.enabled = true;
+                    customNameButton.addEventListener("dblclick", handleNameButtonClick);
+                    console.log("customNameText: ", customNameButton, customNameButton.id);
+                    networkDiv.insertAdjacentElement("beforeend", customNameButton);
+                    const childElements = arrayNetworkDivs[index].children;
+                    console.log(childElements);
+                    
+                    containerInputBox.remove();
+                }
+
+            }
+            addAllButtonListeners();
+        });
 }
 
 function renderTable(networks){
@@ -88,40 +198,41 @@ function renderTable(networks){
             container.insertAdjacentElement("beforeend", arrayNetworkDivs[i]);
 
             console.log("arrayNetworkDivs[i].id:", arrayNetworkDivs[i].id);
-            //const section = document.querySelector(arrayNetworkDivs[0]);
-            //console.log("section:". section);
-            const svg_container = document.getElementById(arrayNetworkDivs[i].id);  
-            console.log("svg_container", svg_container);
-            svg_container.insertAdjacentHTML("beforeend", svg_element);
+            arrayNetworkDivs[i].insertAdjacentHTML("beforeend", svg_element);
             
             console.log("networks[i], ", networks[i]['network']);
-            /*svg_container.insertAdjacentHTML("beforeend", `&nbsp&nbsp${networks[i]['network']}`);*/
+            /*arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `&nbsp&nbsp${networks[i]['network']}`);*/
 
             /*console.log("networks[i], ", networks[i]['network'], `<span class="network_name">` + networks[i]['network'] + `</span>`);*/
-            svg_container.insertAdjacentHTML("beforeend", `<span class="network_name">${networks[i]['network']}</span>`); 
+            arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="network_name">${networks[i]['network']}</span>`); 
 
-            // insert container for Custom Name
-            customNameButton = document.createElement("button");
+            // insert button for Custom Name
+            let customNameButton = document.createElement("button");
             customNameButton.id = "customNameText" + i;
             customNameButton.classList.add("custom_name");
             customNameButton.textContent = "Custom Name";
             customNameButton.enabled = true;
-            customNameButton.addEventListener("click", () => customNameButtonClicked(customNameButton.id));
+            
             console.log("customNameText: ", customNameButton, customNameButton.id);
-            svg_container.insertAdjacentElement("beforeend", customNameButton);
-            //svg_container.insertAdjacentHTML("beforeend", `<span class="custom_name">Custom Name</span>`); 
+            arrayNetworkDivs[i].insertAdjacentElement("beforeend", customNameButton);
+            
+            console.log("Adding to:", customNameButton);
+            const childElements = arrayNetworkDivs[i].children;
+            console.log(childElements);
+
+            customNameButton.addEventListener("dblclick", handleNameButtonClick);
+
+            //arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="custom_name">Custom Name</span>`); 
             /*containerCustomName = document.createElement("div");
             containerCustomName.id = "containerCustomName";
             containerCustomName.classList.add("container_custom_name"); */
             /*console.log("networks[i], ", networks[i]['network'], `<span class="network_name">` + networks[i]['network'] + `</span>`);*/
-            //svg_container.insertAdjacentElement("beforeend", containerCustomName); 
-            const childElements = svg_container.children;
-            console.log(childElements);
+            //arrayNetworkDivs[i].insertAdjacentElement("beforeend", containerCustomName); 
+
             console.log("added Custom Name");
 
-
             rect = `<div class="rectangle_line"></div>`
-            svg_container.insertAdjacentHTML("afterend",rect);
+            arrayNetworkDivs[i].insertAdjacentHTML("afterend",rect);
         }
     }
     catch(error){
