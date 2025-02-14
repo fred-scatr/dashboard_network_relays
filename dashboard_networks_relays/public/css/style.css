@@ -1,12 +1,21 @@
 /* Default Light Mode */
 :root {
     --bg-color: #ffffff;
-    --text-color: #38C7FF;
+    --network-name-color: #212529;
+    --custom-name-color: #D3D3D3;
+    --text-color: #212529;
     --primary-color: #007bff;
     --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
-    --svg-color: #38C7FF;
+    --svg-color:#189AD6;
     --svg-fill: none;     /* Ensure no fill in light mode */
-    
+    --network_hover_bg:  #0253A5;
+    --network-hover-name-color: #212529;
+    --network-hover-name-bg: #0253A5;
+    --network-hover-text:  #ffffff;
+    --network-hover-svg:#ffffff;
+    --network-hover_button_bg:  rgba(0, 0, 0, 0.0);
+    --network-hover_button_color:  #ffffff;
+
 }
 
 /* Dark Mode */
@@ -14,16 +23,19 @@
     --bg-color: #121212;
     --text-color: #19A4DA;
     --primary-color: #19A4DA;
-    --Neutrals-color-bg25: rgba(255, 255, 255, 0.25);
+    --network-name-color: #ffffff;
+    --Neutrals-color-bg25: rgba(97, 61, 61, 0.25);
     --svg-color: #19A4DA;
-    --svg-fill: none;     /* Ensure no fill in light mode */
+    --svg-fill: none;   
+    --network_hover_bg: #19A4DA;
+    --network-hover-name-color: #212529;
+    --network-hover-svg:  #212529;
+    --network-name-bg: #19A4DA;
+    --network-hover-text: #121212;
+    --network-hover_button_color:  #212529;
 }
 
-.network_frame:hover{
-    background-color: #38C7FF;
-    --text-color: #121212;
-    --svg-color: #121212;
-}
+
 /* Apply Variables */
 body {
     background-color: var(--bg-color);
@@ -52,10 +64,26 @@ button {
     padding-left: 5px;
     position: relative;
 }
-
-
+.network_frame:hover{
+    background-color: var(--network_hover_bg);
+    color: var(--network-hover-text);
+}
+.network_frame:hover  .svg_lucide_network{
+    fill: none;   /* Ensures fill is transparent */
+    color: var(--network-hover-svg);;
+}
+.network_frame:hover .custom_name{  /* Custom Name button */
+    background-color: var(--network-hover_button_bg);
+    color: var(--network-hover_button_color);
+}
+.network_frame:hover .network_name{
+    /*background-color: #38C7FF;*/
+    color: var(--network-hover-name-color);
+    --text-color: white;
+    --svg-color: #121212;
+}
 .network_name{
-    color:  var(--text-color); /*var(--Neutrals-color-bg, #000);*/
+    color:  var(--network-name-color); /*var(--Neutrals-color-bg, #000);*/
     font-feature-settings: 'liga' off, 'clig' off;
     padding: 12px;
 
@@ -70,7 +98,7 @@ button {
     position: absolute;
     left: 182px;  /* ✅ Positions the div itself, not the text inside */
     font-size: 12px;
-    background-color: rgba(24, 100, 171, 0.0);
+    background-color: var(--network_hover_bg);
     border: 0px solid white;
     width: 217px;
     height: 28px;
@@ -83,14 +111,8 @@ button {
     /*padding: 12px;*/
 }
 
-.container_custom_name:hover{
-    background-color: #38C7FF;
-    --text-color: #121212;
-    --svg-color: #121212;
-}
-
 .custom_name{
-    color:  var(--text-color); /*var(--Neutrals-color-bg, #000);*/
+    color:  var(--custom-name-color);
     background: rgba(24, 100, 171, 0.0);
     font-feature-settings: 'liga' off, 'clig' off;
     padding: 12px;
@@ -108,8 +130,9 @@ button {
     line-height: 16px; /* 133.333% */
 }
 .custom_name:hover{
-    background-color: rgba(24, 100, 171, 0.0);
-    color:  var(--text-color);
+    background-color:  rgba(0, 0, 0, 0.0);  /* transparent*/
+    /*color: var(network-hover-text);*/
+    color: white;
 }
 .custom_name_input_box{
     background-color: #38ff63;
