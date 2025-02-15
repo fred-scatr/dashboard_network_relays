@@ -1,20 +1,24 @@
 /* Default Light Mode */
 :root {
     --bg-color: #ffffff;
-    --network-name-color: #212529;
-    --custom-name-color: #D3D3D3;
-    --text-color: #212529;
+    --custom-name-color: #212529;
+    --network-name-color: #0240E8;
     --primary-color: #007bff;
+    --last-modified: #212529;
     --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
     --svg-color:#189AD6;
     --svg-fill: none;     /* Ensure no fill in light mode */
     --network_hover_bg:  #0253A5;
-    --network-hover-name-color: #212529;
+    --network-hover-name-color:  #ffffff;
     --network-hover-name-bg: #0253A5;
     --network-hover-text:  #ffffff;
     --network-hover-svg:#ffffff;
     --network-hover_button_bg:  rgba(0, 0, 0, 0.0);
-    --network-hover_button_color:  #ffffff;
+    --network-hover_button_color:  #D3D3D3;
+    --network-hover_last_modified: #D3D3D3;
+    --network-hover_server_version: #D3D3D3;
+    --network-hover_network_status: #D3D3D3;
+
 
 }
 
@@ -23,16 +27,21 @@
     --bg-color: #121212;
     --text-color: #19A4DA;
     --primary-color: #19A4DA;
-    --network-name-color: #ffffff;
+    --network-name-color: #38C7FF;
+    --custom-name-color: #D3D3D3;
+    --last-modified: #D3D3D3;
     --Neutrals-color-bg25: rgba(97, 61, 61, 0.25);
     --svg-color: #19A4DA;
     --svg-fill: none;   
     --network_hover_bg: #19A4DA;
     --network-hover-name-color: #212529;
-    --network-hover-svg:  #212529;
-    --network-name-bg: #19A4DA;
+    --network-hover-svg:  #000000;
+    --network-name-bg: #000000;
     --network-hover-text: #121212;
     --network-hover_button_color:  #212529;
+    --network-hover_last_modified: #212529;
+    --network-hover_server_version: #212529;
+    --network-hover_network_status: #212529;
 }
 
 
@@ -72,16 +81,28 @@ button {
     fill: none;   /* Ensures fill is transparent */
     color: var(--network-hover-svg);;
 }
-.network_frame:hover .custom_name{  /* Custom Name button */
-    background-color: var(--network-hover_button_bg);
-    color: var(--network-hover_button_color);
-}
 .network_frame:hover .network_name{
     /*background-color: #38C7FF;*/
     color: var(--network-hover-name-color);
     --text-color: white;
-    --svg-color: #121212;
 }
+.network_frame:hover .custom_name{  /* Custom Name button */
+    background-color: var(--network-hover_button_bg);
+    color: var(--network-hover_button_color);
+}
+.network_frame:hover .last_modified_date{
+    /*background-color: #38C7FF;*/
+    color: var(--network-hover-name-color);
+}
+.network_frame:hover .server_version{
+    /*background-color: #38C7FF;*/
+    color: var(--network-hover_server_version);
+}
+.network_frame:hover .network_status{
+    /*background-color: #38C7FF;*/
+    color: var(--network-hover_network_status);
+}
+
 .network_name{
     color:  var(--network-name-color); /*var(--Neutrals-color-bg, #000);*/
     font-feature-settings: 'liga' off, 'clig' off;
@@ -99,7 +120,9 @@ button {
     left: 182px;  /* ✅ Positions the div itself, not the text inside */
     font-size: 12px;
     background-color: var(--network_hover_bg);
-    border: 0px solid white;
+    border: 1px solid white;
+    border-radius: 4px;
+    border: 1px solid white;
     width: 217px;
     height: 28px;
     color: white;
@@ -135,13 +158,71 @@ button {
     color: white;
 }
 .custom_name_input_box{
-    background-color: #38ff63;
+    background-color: #f3f2ac;
     color: black;
+    border: 1px solid white;
     border-radius: 4px;
     position: absolute;
     height: 16px;
-    width: 82px;
+    width: 202px;
     left: 5px; 
+}
+
+.last_modified_date{
+    color:  var(--last-modified);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 478px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+}
+
+.server_version{
+    color:  var(--last-modified);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 776px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+}
+
+.network_status{
+    color:  var(--last-modified);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 1007px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
 }
 
 .svg_lucide_network {

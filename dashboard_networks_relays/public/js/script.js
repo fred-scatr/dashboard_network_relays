@@ -222,6 +222,17 @@ function renderTable(networks){
 
             customNameButton.addEventListener("dblclick", handleNameButtonClick);
 
+            // last modified date
+            lastModifiedDate = "Monday Nov 25 23:41:36 2024";
+            arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="last_modified_date">${lastModifiedDate}</span>`); 
+
+            serverVersion = "2024.9.6.0";
+            arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="server_version">${serverVersion}</span>`); 
+
+            networkStatus = "Up";
+            arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="network_status">${networkStatus}</span>`); 
+
+
             //arrayNetworkDivs[i].insertAdjacentHTML("beforeend", `<span class="custom_name">Custom Name</span>`); 
             /*containerCustomName = document.createElement("div");
             containerCustomName.id = "containerCustomName";
@@ -232,7 +243,7 @@ function renderTable(networks){
             console.log("added Custom Name");
 
             rect = `<div class="rectangle_line"></div>`
-            arrayNetworkDivs[i].insertAdjacentHTML("afterend",rect);
+            arrayNetworkDivs[i].insertAdjacentHTML("afterend",rect); 
         }
     }
     catch(error){
