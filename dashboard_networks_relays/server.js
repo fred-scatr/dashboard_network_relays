@@ -12,8 +12,8 @@ app.use((req, res, next) => {
     next();
 });
 
-
 const port = 3100;
+app.use(express.json());
 
 app.get('/', (req, res) => {
     console.log("dirname = ", __dirname)
@@ -51,6 +51,50 @@ app.get('/networks',  async (req, res) => {  // get list of networks on MS
 });
    
 
+app.post('/NetworkInfo', async(req, res) => {  // get relays for this networkName
+    var networkName = req.body.param1;
+    console.log("networkName: ", networkName);
+    // Create connection
+    const mysql = require('mysql2');
+    try{
+        const connection = mysql.createConnection({
+            host: WIREGUARD_MS_HOST,
+            user: 'scatr',
+            password: 'stun1234',
+            database: 'SCATR'
+            }); 
+        
+            // Query the database
+        connection.query(`SELECT *  FROM networks WHERE network="${networkName}"`, (err, results) => {
+        if (err) {
+            console.error('Error:', err.message);
+            res.send('');
+        } else {
+            console.log('Results:', results);
+            if(typeof(results) == 'object'){
+                if(results.length > 0 && 
+                    results[0]['configuration'] != null){
+                        const relays = results[0]['configuration']['relays'];
+                        console.log(relays);
+                        res.send(relays);
+                }
+                else{
+                    res.send("Error");
+                }
+            }
+            else{
+                res.send("Error");
+
+            }
+        }
+        connection.end();
+        });    
+    } catch (err) {
+        console.error('NetworkInfo:', err.message);
+        res.send("Error;", err);
+      }
+
+});  
 
 
 

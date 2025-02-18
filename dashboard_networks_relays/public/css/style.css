@@ -1,10 +1,12 @@
 /* Default Light Mode */
 :root {
     --bg-color: #ffffff;
+    --header_items:  #212529;
     --custom-name-color: #212529;
     --network-name-color: #0240E8;
     --primary-color: #007bff;
     --last-modified: #212529;
+    --network_actions_color: #212529;
     --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
     --svg-color:#189AD6;
     --svg-fill: none;     /* Ensure no fill in light mode */
@@ -18,18 +20,20 @@
     --network-hover_last_modified: #D3D3D3;
     --network-hover_server_version: #D3D3D3;
     --network-hover_network_status: #D3D3D3;
-
+    --network-hover_network_actions: #D3D3D3;    
 
 }
 
 /* Dark Mode */
 .dark-mode {
     --bg-color: #121212;
+    --header_items: #D3D3D3;
     --text-color: #19A4DA;
     --primary-color: #19A4DA;
     --network-name-color: #38C7FF;
     --custom-name-color: #D3D3D3;
     --last-modified: #D3D3D3;
+    --network_actions_color: #D3D3D3; 
     --Neutrals-color-bg25: rgba(97, 61, 61, 0.25);
     --svg-color: #19A4DA;
     --svg-fill: none;   
@@ -42,8 +46,8 @@
     --network-hover_last_modified: #212529;
     --network-hover_server_version: #212529;
     --network-hover_network_status: #212529;
+    --network-hover_network_actions: #212529;       
 }
-
 
 /* Apply Variables */
 body {
@@ -61,6 +65,24 @@ button {
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 182px 296px 298px 153px 78px 100px;/*  columns: 182, 478-182, 776-478, 929-776, 1007-929  */
+    /*grid-template-rows: 50px 100px; /* rows */
+    /*gap: 10px; /* Space between grid items */
+}
+
+.item {
+    color: var(--header_items);
+    text-align: left;
+    padding: 10px;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */    
 }
 
 .network_frame{
@@ -82,7 +104,6 @@ button {
     color: var(--network-hover-svg);;
 }
 .network_frame:hover .network_name{
-    /*background-color: #38C7FF;*/
     color: var(--network-hover-name-color);
     --text-color: white;
 }
@@ -91,16 +112,17 @@ button {
     color: var(--network-hover_button_color);
 }
 .network_frame:hover .last_modified_date{
-    /*background-color: #38C7FF;*/
     color: var(--network-hover-name-color);
 }
 .network_frame:hover .server_version{
-    /*background-color: #38C7FF;*/
     color: var(--network-hover_server_version);
 }
 .network_frame:hover .network_status{
-    /*background-color: #38C7FF;*/
     color: var(--network-hover_network_status);
+}
+.network_frame:hover .network_actions_button{
+    background-color: rgba(24, 100, 171, 0.0);
+    color: var(--network-hover_network_actions);
 }
 
 .network_name{
@@ -213,7 +235,7 @@ button {
     padding: 12px;
     position: absolute;
     height: 32px;
-    left: 1007px;  /* ✅ Positions the div itself, not the text inside */
+    left: 929px;  /* ✅ Positions the div itself, not the text inside */
     display: flex;
     justify-content: left;
     align-items: center;
@@ -224,6 +246,26 @@ button {
     font-weight: 500;
     line-height: 16px; /* 133.333% */
 }
+
+.network_actions_button{
+    color:  var(--network_actions_color);
+    background: rgba(24, 100, 171, 0.0);
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 1007px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+} 
+
 
 .svg_lucide_network {
     width: 16px;
@@ -237,7 +279,6 @@ button {
     background-repeat: no-repeat;
     background-position: center; */
 }  
-
 
 .rectangle_line {
     width: 1160px;
