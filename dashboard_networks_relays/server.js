@@ -51,7 +51,7 @@ app.get('/networks',  async (req, res) => {  // get list of networks on MS
 });
    
 
-app.post('/NetworkInfo', async(req, res) => {  // get relays for this networkName
+app.post('/NetworkInfo', async(req, res) => {  // get info and relays for this networkName
     var networkName = req.body.param1;
     console.log("networkName: ", networkName);
     // Create connection

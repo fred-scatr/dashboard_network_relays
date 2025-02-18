@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 })();
 
-function removeAllCustomNameButtonListeners(){        // remove the listeners from the Buttons in the network divs 
+function removeAllCustomNameButtonListeners(){        // remove the listeners from the Buttons in the network divs when one has been selected
     const allDivs = document.querySelectorAll('div');
     const theDivs = Array.from(allDivs).map(div => div);
     const divIds = Array.from(allDivs).map(div => div.id); // get array of all divs
@@ -70,7 +70,7 @@ function removeAllCustomNameButtonListeners(){        // remove the listeners fr
     }
 }
 
-function addAllCustomNameButtonListeners(){
+function addAllCustomNameButtonListeners(){  // after Custom Name selected and updated, add all Custom Name button listeners back
     const allDivs = document.querySelectorAll('div');
     const theDivs = Array.from(allDivs).map(div => div);
     const divIds = Array.from(allDivs).map(div => div.id); // get array of all divs
@@ -177,6 +177,11 @@ const handleNetworkActionButtonClick = (event) => {
     networkActionButtonClicked(event.target.id, event);
 };
 
+const handleRelayActionButtonClick = (event) => {
+    console.log("handleNetworkActionButtonClick");
+    relayActionButtonClicked(event.target.id, event);
+};
+
 async function networkActionButtonClicked(buttonInfo, event){
     try{
         // remove button and replace with a Custom name input box
@@ -193,7 +198,7 @@ async function networkActionButtonClicked(buttonInfo, event){
         networkName = networkDiv.innerText.split("\n")[0];
         console.log("name: ", networkName);
         //networkDiv.style.setProperty("background-color",  "#38C7FF");
-        const response = await fetch('NetworkInfo', {
+        const response = await fetch('NetworkInfo', {   // get info and relays for this networkName
             method: 'POST', // Setting the method to POST
             headers: {
                 'Content-Type': 'application/json'
@@ -207,15 +212,19 @@ async function networkActionButtonClicked(buttonInfo, event){
         }
         else{
             const data = await response.text();    
-            console.log("netwk info:", data);
+            //console.log("netwk info:", data);
             jsonData =  JSON.parse(data);
             console.log("netwk info jsonData", jsonData);
+
+            await renderRelaysTable(jsonData);
         }        
 
     }
     catch(error){
         console.log("Error in networkActionButtonClicked", error);
     }
+
+
 }
 
 function renderNetworksTable(networks){
@@ -285,7 +294,7 @@ function renderNetworksTable(networks){
             /*console.log("networks[i], ", networks[i]['network'], `<span class="network_name">` + networks[i]['network'] + `</span>`);*/
             //arrayNetworkDivs[i].insertAdjacentElement("beforeend", containerCustomName); 
 
-            // insert buttons for Actions
+            // insert button for Actions
             let actionsButton = document.createElement("button");
             actionsButton.id = "actionButton" + i;
             actionsButton.classList.add("network_actions_button");
@@ -297,7 +306,7 @@ function renderNetworksTable(networks){
 
             //console.log("added Custom Name");
 
-            rect = `<div class="rectangle_line"></div>`
+            let rect = `<div class="rectangle_line"></div>`;
             arrayNetworkDivs[i].insertAdjacentHTML("afterend",rect); 
         }
     }
@@ -338,41 +347,65 @@ async function create_networks_table(){
         }
 }
 
-function renderRelaysTable(relays){
-    // create array of divs, each one a separate network
+function renderRelaysTable(networkInfo){
+    const container = document.getElementById('content');  
+    container.innerHTML = '';  // insert row header here
 
     try{
-        for(let i=0;i<networks.length;i++){    
-            arrayRelaykDivs[i] = document.createElement("div");
-            arrayRelaykDivs[i].id = 'arrayNetworkDivs[' + i + ']';
-            arrayRelaykDivs[i].classList.add("network_frame");
-
-            svg_element = `<svg class="svg_lucide_network" width="16" height="16"  viewBox="0 0 16 16">
-            <g fill="None" clip-path="url(#clip0_6_109)">
-                    <path  d="M3.33337 10.6663V8.66634C3.33337 8.48953 3.40361 8.31996 3.52864 8.19494C3.65366 8.06991 3.82323 7.99967 4.00004 7.99967H12C12.1769 7.99967 12.3464 8.06991 12.4714 8.19494C12.5965 8.31996 12.6667 8.48953 12.6667 8.66634V10.6663M8.00004 7.99967V5.33301M11.3334 10.6663H14C14.3682 10.6663 14.6667 10.9648 14.6667 11.333V13.9997C14.6667 14.3679 14.3682 14.6663 14 14.6663H11.3334C10.9652 14.6663 10.6667 14.3679 10.6667 13.9997V11.333C10.6667 10.9648 10.9652 10.6663 11.3334 10.6663ZM2.00004 10.6663H4.66671C5.0349 10.6663 5.33337 10.9648 5.33337 11.333V13.9997C5.33337 14.3679 5.0349 14.6663 4.66671 14.6663H2.00004C1.63185 14.6663 1.33337 14.3679 1.33337 13.9997V11.333C1.33337 10.9648 1.63185 10.6663 2.00004 10.6663ZM6.66671 1.33301H9.33337C9.70156 1.33301 10 1.63148 10 1.99967V4.66634C10 5.03453 9.70156 5.33301 9.33337 5.33301H6.66671C6.29852 5.33301 6.00004 5.03453 6.00004 4.66634V1.99967C6.00004 1.63148 6.29852 1.33301 6.66671 1.33301Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
-                </g>
-                <defs>
-                    <clipPath id="clip0_6_109">
-                    <rect width="16" height="16"  fill="None"  />
-                    </clipPath>
-                </defs>
-                </svg>`;
+    // create array of divs, each one a separate relay
+        let relays = [];
+        /*for(let i=0;i<networkInfo.length;i++){
+            relays.push(networkInfo[i]);
+        }
+        console.log("relays", relays);*/
+        let arrayRelayDivs = [];
+        for(let i=0;i<networkInfo.length;i++){    
+            arrayRelayDivs[i] = document.createElement("div");
+            arrayRelayDivs[i].id = 'arrayNetworkDivs[' + i + ']';
+            arrayRelayDivs[i].classList.add("network_frame");
 
             svg_relay_element = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="lucide/server">
                 <path id="Vector" d="M4 4.00065H4.00666M4 12.0007H4.00666M2.66666 1.33398H13.3333C14.0697 1.33398 14.6667 1.93094 14.6667 2.66732V5.33398C14.6667 6.07036 14.0697 6.66732 13.3333 6.66732H2.66666C1.93028 6.66732 1.33333 6.07036 1.33333 5.33398V2.66732C1.33333 1.93094 1.93028 1.33398 2.66666 1.33398ZM2.66666 9.33398H13.3333C14.0697 9.33398 14.6667 9.93094 14.6667 10.6673V13.334C14.6667 14.0704 14.0697 14.6673 13.3333 14.6673H2.66666C1.93028 14.6673 1.33333 14.0704 1.33333 13.334V10.6673C1.33333 9.93094 1.93028 9.33398 2.66666 9.33398Z" stroke="#D3D3D3" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
             </svg>`;              
+            
+            container.insertAdjacentElement('beforeend',arrayRelayDivs[i]);
 
-            const container = document.getElementById('content');   
+            arrayRelayDivs[i].insertAdjacentHTML('beforeend', svg_relay_element);
+            
+            console.log("name:", networkInfo[i]['full-server-name']);
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="relay_full_server_name">${networkInfo[i]['full-server-name']}</span>`); 
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="custom_relay_name">Custom Name</span>`); 
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="bind_ips">Bind IPs</span>`); 
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_ip">Admin IP</span>`);           
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_port">Admin Port</span>`); 
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="in_use">In Use</span>`);                
+            
+            the_trash = `<button class="trash_can_button" id='trash_can'>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="lucide/trash-2">
+                <path id="Vector" d="M2 4.00065H14M12.6667 4.00065V13.334C12.6667 14.0007 12 14.6673 11.3333 14.6673H4.66667C4 14.6673 3.33333 14.0007 3.33333 13.334V4.00065M5.33333 4.00065V2.66732C5.33333 2.00065 6 1.33398 6.66667 1.33398H9.33333C10 1.33398 10.6667 2.00065 10.6667 2.66732V4.00065M6.66667 7.33398V11.334M9.33333 7.33398V11.334" stroke="#D3D3D3" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                </svg>
+            </button>`
+
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", the_trash);      
+            document.getElementById('trash_can').addEventListener("dblclick", handleRelayActionButtonClick);            
+
+            arrayRelayDivs[i].insertAdjacentHTML("afterend",`<div class="relays_rectangle_line"></div>`);             
+
+
+
+
         }
     }
     catch(error){
-        console.log("Error in renderRelaysTable");
+        console.log("Error in renderRelaysTable", error);
     }
 }
 
-async function create_relays_table(){
+/*async function create_relays_table(){
     console.log("create_relays_table");
     var jsonData;
 
@@ -395,7 +428,7 @@ async function create_relays_table(){
             //console.log("netwk info:", data);
             jsonData =  JSON.parse(data);
             console.log("netwk info jsonData", jsonData);
-        }
+         }
         
     } catch (error) {
         console.error('Error fetching data in create_networks_table:', error);
@@ -404,4 +437,4 @@ async function create_relays_table(){
 
     //renderRelaysTable(relays);
 
-}
+}*/
