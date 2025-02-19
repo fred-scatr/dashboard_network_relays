@@ -173,13 +173,13 @@ function customNameButtonClicked (buttonInfo, event){
 }
 
 const handleNetworkActionButtonClick = (event) => {
-    console.log("handleNetworkActionButtonClick");
+    console.log("handleNetworkActionButtonClick", event.target.id, event);
     networkActionButtonClicked(event.target.id, event);
 };
 
 const handleRelayActionButtonClick = (event) => {
-    console.log("handleNetworkActionButtonClick");
-    relayActionButtonClicked(event.target.id, event);
+    console.log("handleNetworkActionButtonClick", event.target.id, event);
+    //relayActionButtonClicked(event.target.id, event);
 };
 
 async function networkActionButtonClicked(buttonInfo, event){
@@ -358,7 +358,19 @@ function renderRelaysTable(networkInfo){
             relays.push(networkInfo[i]);
         }
         console.log("relays", relays);*/
+        
+        let addRelayButton = document.createElement("button");
+        addRelayButton.id = "addRelayButton";
+        addRelayButton.classList.add("add_relay_button");
+        addRelayButton.textContent = "Manage Relays";
+        addRelayButton.enabled = true;     
+        container.insertAdjacentElement("beforebegin", addRelayButton); 
+        container.insertAdjacentHTML("beforeend", `<br><br><br><br>`);
+        
+
+
         let arrayRelayDivs = [];
+        let the_trash_can =[];
         for(let i=0;i<networkInfo.length;i++){    
             arrayRelayDivs[i] = document.createElement("div");
             arrayRelayDivs[i].id = 'arrayNetworkDivs[' + i + ']';
@@ -382,21 +394,25 @@ function renderRelaysTable(networkInfo){
             arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_port">Admin Port</span>`); 
             arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="in_use">In Use</span>`);                
             
-            the_trash = `<button class="trash_can_button" id='trash_can'>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            button_id = "svg_trash_can_button" + i;
+            //let the_trash_can = `<button class="svg_trash_can_button" id=${button_id} >
+            the_trash_can = `<svg id=${button_id} class="svg_trash_can" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="lucide/trash-2">
                 <path id="Vector" d="M2 4.00065H14M12.6667 4.00065V13.334C12.6667 14.0007 12 14.6673 11.3333 14.6673H4.66667C4 14.6673 3.33333 14.0007 3.33333 13.334V4.00065M5.33333 4.00065V2.66732C5.33333 2.00065 6 1.33398 6.66667 1.33398H9.33333C10 1.33398 10.6667 2.00065 10.6667 2.66732V4.00065M6.66667 7.33398V11.334M9.33333 7.33398V11.334" stroke="#D3D3D3" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
                 </g>
-                </svg>
-            </button>`
+                </svg>`
+            //</button>` 
 
-            arrayRelayDivs[i].insertAdjacentHTML("beforeend", the_trash);      
-            document.getElementById('trash_can').addEventListener("dblclick", handleRelayActionButtonClick);            
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", the_trash_can);      
+            /*document.getElementById('svg_trash_can').addEventListener('click', () => {
+                alert('Icon clicked!');
+            });*/
+            console.log("button_id:", button_id);
+            document.getElementById(button_id).addEventListener("dblclick", handleRelayActionButtonClick);            
 
             arrayRelayDivs[i].insertAdjacentHTML("afterend",`<div class="relays_rectangle_line"></div>`);             
 
-
-
+            //actionsButton.addEventListener("dblclick", handleAddRelayButtonClick);
 
         }
     }

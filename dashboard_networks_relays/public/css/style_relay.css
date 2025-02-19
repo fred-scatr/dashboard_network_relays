@@ -1,0 +1,236 @@
+/* Default Light Mode */
+:root {
+    --bg-color: #ffffff;
+    --header_items:  #212529;
+    --relay_full_server_name: #212529;
+    --custom_relay_name: #212529;
+    --bind_ips: #212529;
+    --admin_ip: #212529;
+    --admin_port: #212529;
+    --in_use: #212529;
+    --svg-color:#189AD6;
+    --svg-fill: none;     /* Ensure no fill in light mode */
+    --svg-bg: #212529;
+    --Neutrals-color-bg25: rgba(0, 0, 0, 0.250);
+    --network_hover_bg:  #0253A5;
+    --network-hover-name-color:  #ffffff;
+    --network-hover-name-bg: #0253A5;
+    --network-hover-text:  #ffffff;
+    --network-hover-svg:#ffffff;
+    --network-hover_button_bg:  rgba(0, 0, 0, 0.0);
+    --network-hover_button_color:  #D3D3D3;
+    --network-hover_last_modified: #D3D3D3;
+    --network-hover_server_version: #D3D3D3;
+    --network-hover_network_status: #D3D3D3;
+    --network-hover_network_actions: #D3D3D3;    
+
+}
+
+/* Dark Mode */
+.dark-mode {
+    --bg-color: #121212;
+    --header_items: #D3D3D3;
+    --relay_full_server_name: #D3D3D3;
+    --custom_relay_name: #D3D3D3;
+    --bind_ips: #D3D3D3;
+    --admin_ip: #D3D3D3;
+    --admin_port:#D3D3D3;
+    --in_use: #D3D3D3;
+    --svg-color:#189AD6;
+    --svg-fill: none;     /* Ensure no fill in light mode */  
+    --Neutrals-color-bg25: rgba(255, 255, 255, 0.25);    
+    --network_hover_bg: #19A4DA;
+    --network-hover-name-color: #212529;
+    --network-hover-svg:  #000000;
+    --network-name-bg: #000000;
+    --network-hover-text: #121212;
+    --network-hover_button_color:  #212529;
+    --network-hover_last_modified: #212529;
+    --network-hover_server_version: #212529;
+    --network-hover_network_status: #212529;
+    --network-hover_network_actions: #212529;       
+}
+
+/* Apply Variables */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.relay_info_item{
+    color:  var(--relay_info_item); /*var(--Neutrals-color-bg, #000);*/
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */
+}
+.svg_relay_icon{
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    position: absolute;
+    left: 8px;
+    /*background-image: url('/images/svg_lucide_network.svg');*/
+    color: var(--svg-color); 
+    fill: var(--svg-fill);   /* Ensures fill is transparent */
+    stroke: var(--svg-color);
+}
+.relay_full_server_name{
+    color:  var(--relay_full_server_name);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 40px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */   
+}
+.custom_relay_name{
+    color:  var(--custom_relay_name); /*var(--Neutrals-color-bg, #000);*/
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 182px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */   
+}
+.bind_ips{
+    color:  var(--bind_ips);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 416px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */      
+}
+.admin_ip{
+    color:  var(--admin_ip);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 599px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */     
+}
+.admin_port{
+    color:  var(--admin_port);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 776px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */        
+}
+.in_use{
+    color:  var(--in_use);
+    background: rgba(0, 0, 0, 0.0); 
+    font-feature-settings: 'liga' off, 'clig' off;
+    padding: 12px;
+    position: absolute;
+    height: 32px;
+    left: 929px;  /* ✅ Positions the div itself, not the text inside */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    /* Body xSmall */
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */     
+}
+.relays_rectangle_line {
+
+    border: 1px solid var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));
+    background: var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));
+}
+.svg_trash_can_button  {
+    /*display: flex;   */
+    position: absolute;
+    left: 1019px;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    /*background: green; /*var(--bg-color);*/
+
+    /*border: 1px solid var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));
+    background: var(--Neutrals-color-bg25, rgba(255, 255, 255, 0.25));    */
+}
+.svg_trash_can{
+    position: absolute;
+    left: 1019px;
+    height: 16px;
+    width: 16px;
+    /*display: flex;             /* Enables flexbox */
+    align-items: center;       /* Vertically centers */
+    /*  justify-content: center;   /* Horizontally centers */
+    /*background: none;          /* Remove any background */
+    /*border: none;              /* Remove default border */
+    /*padding: 10px;             /* Adjust padding as needed */
+
+}
+
+.add_relay_button{
+    position: absolute;
+    left: 1019px;
+    height: 16px;
+    width: 16px;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 133.333% */   
+}
