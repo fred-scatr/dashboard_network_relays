@@ -96,7 +96,124 @@ app.post('/NetworkInfo', async(req, res) => {  // get info and relays for this n
 
 });  
 
+app.post('/deleteRelayIndex', async (req, res) => {  // use networkName and list of relays to allocate by writing to SQL DB
+    // find the index of the network relay and delete it, given the network name and the label
+    const mysql = require('mysql2/promise');
+    networkName = req.body.param1;
+    index = req.body.param2;  // this is the row in the table; corresponds to array index in DB
+    ipAddresses = req.body.param3;
+    label = req.body.param4;
 
+    try{
+        const connection = await mysql.createConnection({
+            host: WIREGUARD_MS_HOST,
+            user: 'scatr',
+            password: 'stun1234',
+            database: 'SCATR'
+        });
+
+        // Query the database; get list of existing relays for this network
+        var relays;
+        const query = 'SELECT JSON_EXTRACT(configuration, "$.relays") AS relays FROM networks WHERE network = ?';
+        //const [rows] = await connection.execute('SELECT JSON_EXTRACT(configuration, "$.relays") AS relays FROM networks WHERE network = ?');
+        var rows;
+        try {
+            const [rowsQueryResult] = await connection.execute(query, [networkName]);
+            rows = rowsQueryResult;
+            //kconsole.log(rows);
+        } catch (error) {
+            console.error('Error executing query:', error);
+        } finally {
+            await connection.end(); // Ensure the connection is closed
+        }
+        
+        console.log('Query results:', rows[0]);
+
+        // verify index from the webpage is correct before deletion in the SQL DB
+        // verify the label; NB: labels may not be unique across the network
+        let dbDataBindIps = [];
+        if(rows[0]['relays'][index]){
+            dbIndexData = rows[0]['relays'][index];
+            keys = Object.keys(rows[0]['relays'][index]['bind']);
+            for(let i=0; i<keys.length; i++){
+                dbDataBindIps.push(rows[0]['relays'][index]['bind'][keys[i]]);
+            }
+
+            console.log('dbData', dbIndexData, dbDataBindIps);
+        }
+
+        tableDataIps = ipAddresses.trim().split('\n');
+        tableDataIps = tableDataIps.sort();
+        console.log(tableDataIps);
+
+        dbDataBindIps = dbDataBindIps.sort();
+        result = dbDataBindIps.every((value, index) => value === tableDataIps[index]);
+        
+        if(!result){
+            console.log("Error! list of IPs to delete not found in SQL db relay list");
+
+        }
+        else{
+            console.log("result of compare is true");
+            // verify that the SQL DB has the index matching the row to be deleted
+            const connection = await mysql.createConnection({
+                host: WIREGUARD_MS_HOST,
+                user: 'scatr',
+                password: 'stun1234',
+                database: 'SCATR'
+            });
+            const query = 'SELECT JSON_LENGTH(configuration, "$.relays") AS relay_count FROM networks WHERE network = ?';
+            //const [rows] = await connection.execute('SELECT JSON_EXTRACT(configuration, "$.relays") AS relays FROM networks WHERE network = ?');
+            var rows;
+            try{
+            const [rowsQueryResult] = await connection.execute(query, [networkName]);
+            rows = rowsQueryResult;            
+            //kconsole.log(rows);
+            } catch (error) {
+            console.error('Error executing query:', query, error);
+            } finally {
+            await connection.end(); // Ensure the connection is closed
+
+                            
+            if (Number.isInteger(index) || index < 0) throw new Error("Invalid index");
+            console.log("index: ", index, typeof(index));
+            // verify the index is found in the DB
+            if(index <= rows[0].relay_count ){
+                   
+                const connection = await mysql.createConnection({
+                    host: WIREGUARD_MS_HOST,
+                    user: 'scatr',
+                    password: 'stun1234',
+                    database: 'SCATR'
+                });
+                const query = `UPDATE networks SET configuration = JSON_REMOVE(configuration, "$.relays[${index}]") WHERE  network = ?`;
+                //const [rows] = await connection.execute('SELECT JSON_EXTRACT(configuration, "$.relays") AS relays FROM networks WHERE network = ?');
+                var rows;
+                try {
+                    const [rowsQueryResult] = await connection.execute(query, [networkName]);
+                    rows = rowsQueryResult;
+                    //kconsole.log(rows);
+                } catch (error) {
+                    console.error('Error executing query:', error);
+                    throw new Error("Unable to remove array element from SQL DB");
+                } finally {
+                    await connection.end(); // Ensure the connection is closed
+                }
+            }
+
+
+            res.send(result);
+        
+            }
+        }
+
+    }
+    
+    catch(error){
+        console.error('Error fetching data:', error);
+    }
+
+});
 
 
 

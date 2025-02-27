@@ -1,5 +1,5 @@
 let arrayNetworkDivs = [];
-
+let arrayRelayDivs = [];
 create_networks_table();
 
 
@@ -174,29 +174,130 @@ function customNameButtonClicked (buttonInfo, event){
 
 const handleNetworkActionButtonClick = (event) => {
     console.log("handleNetworkActionButtonClick", event.target.id, event);
-    networkActionButtonClicked(event.target.id, event);
+    networkManageRelaysButtonClicked(event.target.id, event);
 };
 
-const handleRelayActionButtonClick = (event) => {
-    console.log("handleNetworkActionButtonClick", event.target.id, event);
-    //relayActionButtonClicked(event.target.id, event);
+const handleManageRelaysButtonClicked = (event) => {
+    console.log("handleManageRelaysButtonClicked");
+
+    console.log(event);
+    index = event.target.id.split('actionButton')[1];  // data is in the network array divs; get index, then get the div of interest
+    parentDiv = arrayNetworkDivs[index];
+    let network_name = parentDiv.querySelector(".network_name").textContent;
+    console.log(network_name);
+    networkManageRelaysButtonClicked(network_name, event); 
+
 };
 
-async function networkActionButtonClicked(buttonInfo, event){
+async function deleteRelay(networkName, relayName, index, bind_ips, label){
+    // use relay name and index to verify the correct relay is removed
+
+    try{        
+        const response = await fetch('deleteRelayIndex', {   // get info and relays for this networkName
+            method: 'POST', // Setting the method to POST
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                param1: networkName,
+                param2: index,
+                param3: bind_ips,
+                param4: label  
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        else{
+            const data = await response.text();    
+            //console.log("netwk info:", data);
+            jsonData =  JSON.parse(data);
+            console.log("netwk info jsonData", jsonData);
+
+            
+            if(jsonData){ 
+                let rFrames = document.querySelectorAll(".relay_frame"); // Get all divs with class "r_frame"
+                let indexToRemove = index; // Change this to the desired index
+                
+                if (indexToRemove >= 0 && indexToRemove < rFrames.length) {
+                    let targetDiv = rFrames[indexToRemove]; // Select the div to remove
+                    targetDiv.parentNode.removeChild(targetDiv); // Remove it from its parent
+                } else {
+                    console.log("Invalid index: No such element found.");
+                }                   
+
+            }   
+        }
+    }
+    catch(error){
+
+    }
+
+}
+
+const handleRelayTrashButtonClick = (networkName, event) => {
+    console.log(`handleRelayTrashButtonClick ${networkName}, ev:${event}, ${event.target.id}`);
+    const container = document.getElementById("content");
+
+    const observer = new MutationObserver(() => {
+    let rFrames = container.querySelectorAll(".relay_frame");
+
+    if (rFrames.length >= expectedCount) {
+        observer.disconnect(); // Stop observing once all elements exist
+
+        let parentDiv = rFrames[index];
+        console.log(`parentDiv:`, parentDiv);
+    } else {
+        console.log(`Waiting for all .r_frame elements... Found ${rFrames.length}`);
+    }
+    });
+
     try{
-        // remove button and replace with a Custom name input box
-        console.log("networkActionButtonClicked", "button clicked: ", buttonInfo);
-        button = document.getElementById(buttonInfo);
-    
-        // get index of button so we can get the index of the network div (customNameText15 is format)
-        index = buttonInfo.split('Button')[1];
+        index = event.target.id.split("svg_trash_can_button")[1];
+
+        //console.log([...document.querySelectorAll("*")].map(e => e.className));
+
+        let parentDiv = container.querySelectorAll(".relay_frame")[index];
+        console.log(`parentDiv:${parentDiv}`);
+        // there may be more than one bind ip; read innerHTML to preserve formatting ad substitute 
+        let bindIpTextWithBreaks = parentDiv.querySelector(".bind_ips").innerHTML;
+        bind_ips = bindIpTextWithBreaks.replace(/<br\s*\/?>/gi, "\n"); // Replace <br> with newline
+        console.log("A bind_ips: ", bind_ips);
         
-        // get the div that this button is located in by the id of the button;   
-        console.log(index, arrayNetworkDivs) ;
-        networkDiv = document.getElementById(arrayNetworkDivs[index].id);
-        console.log("index:", index, "event:", event, "networkDiv:", arrayNetworkDivs[index].id);
-        networkName = networkDiv.innerText.split("\n")[0];
-        console.log("name: ", networkName);
+        relayName = parentDiv.querySelector(".relay_full_server_name").textContent;        
+        label = parentDiv.querySelector(".custom_relay_name").textContent; 
+        console.log(`remove relay ${relayName}, index:${index}, bind_ips:${bind_ips}, label:${label}`);
+
+        deleteRelay(networkName, relayName, index, bind_ips, label);
+    }
+    catch(error){
+        console.error('Error in handleRelayTrashButtonClick:', error);
+    }
+};
+
+async function displayRelayPopup(){
+    container = document.getElementById('content')
+    container.innerHTML = `<div id="modal-container"></div>`
+
+    console.log("displayRelayPopup", event.target.id, event);
+    fetch('relay_modal.html') // Load the modal from an external file
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('modal-container').innerHTML = html;
+        document.getElementById('popupModal').style.display = 'block';
+    })
+    .catch(error => console.error('Error loading modal:', error));
+    //relayActionButtonClicked(event.target.id, event);
+
+    // load popup box options 
+    // load list of networkd
+    
+}
+
+async function networkManageRelaysButtonClicked(networkName, event){
+    console.log("networkManageRelaysButtonClicked");
+
+    try{
         //networkDiv.style.setProperty("background-color",  "#38C7FF");
         const response = await fetch('NetworkInfo', {   // get info and relays for this networkName
             method: 'POST', // Setting the method to POST
@@ -216,7 +317,7 @@ async function networkActionButtonClicked(buttonInfo, event){
             jsonData =  JSON.parse(data);
             console.log("netwk info jsonData", jsonData);
 
-            await renderRelaysTable(jsonData);
+            await renderRelaysTable(networkName, jsonData);
         }        
 
     }
@@ -295,14 +396,14 @@ function renderNetworksTable(networks){
             //arrayNetworkDivs[i].insertAdjacentElement("beforeend", containerCustomName); 
 
             // insert button for Actions
-            let actionsButton = document.createElement("button");
-            actionsButton.id = "actionButton" + i;
-            actionsButton.classList.add("network_actions_button");
-            actionsButton.textContent = "Manage Relays";
-            actionsButton.enabled = true;     
-            arrayNetworkDivs[i].insertAdjacentElement("beforeend", actionsButton); 
+            let manageRelaysButton = document.createElement("button");
+            manageRelaysButton.id = "actionButton" + i;
+            manageRelaysButton.classList.add("network_actions_button");
+            manageRelaysButton.textContent = "Manage Relays";
+            manageRelaysButton.enabled = true;     
+            arrayNetworkDivs[i].insertAdjacentElement("beforeend", manageRelaysButton); 
 
-            actionsButton.addEventListener("dblclick", handleNetworkActionButtonClick);
+            manageRelaysButton.addEventListener("dblclick", handleManageRelaysButtonClicked);
 
             //console.log("added Custom Name");
 
@@ -340,14 +441,14 @@ async function create_networks_table(){
 
         renderNetworksTable(networks);
 
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            alert(`"Failed to fetch data " ${error}`);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert(`"Failed to fetch data " ${error}`);
 
-        }
+    }
 }
 
-function renderRelaysTable(networkInfo){
+function renderRelaysTable(networkName, networkInfo){
     const container = document.getElementById('content');  
     container.innerHTML = '';  // insert row header here
 
@@ -362,19 +463,17 @@ function renderRelaysTable(networkInfo){
         let addRelayButton = document.createElement("button");
         addRelayButton.id = "addRelayButton";
         addRelayButton.classList.add("add_relay_button");
-        addRelayButton.textContent = "Manage Relays";
+        addRelayButton.textContent = "Add Relay";
         addRelayButton.enabled = true;     
         container.insertAdjacentElement("beforebegin", addRelayButton); 
         container.insertAdjacentHTML("beforeend", `<br><br><br><br>`);
         
-
-
         let arrayRelayDivs = [];
         let the_trash_can =[];
         for(let i=0;i<networkInfo.length;i++){    
             arrayRelayDivs[i] = document.createElement("div");
-            arrayRelayDivs[i].id = 'arrayNetworkDivs[' + i + ']';
-            arrayRelayDivs[i].classList.add("network_frame");
+            arrayRelayDivs[i].id = 'arrayRelayDivs[' + i + ']';
+            arrayRelayDivs[i].classList.add("relay_frame");
 
             svg_relay_element = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="lucide/server">
@@ -389,9 +488,24 @@ function renderRelaysTable(networkInfo){
             console.log("name:", networkInfo[i]['full-server-name']);
             arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="relay_full_server_name">${networkInfo[i]['full-server-name']}</span>`); 
             arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="custom_relay_name">Custom Name</span>`); 
-            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="bind_ips">Bind IPs</span>`); 
-            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_ip">Admin IP</span>`);           
-            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_port">Admin Port</span>`); 
+
+            // bind ips list
+            keys = Object.keys(networkInfo[i]['bind']);
+
+            str_bind_ips = ''
+            if(keys.length == 1)
+                str_bind_ips = str_bind_ips + `${networkInfo[i]['bind'][keys[0]]}`;
+            else{
+                for(let k=0; k<keys.length; k++){
+                    console.log(`push ${keys[k]},  ${networkInfo[i]['bind'][keys[k]]}`);
+                    str_bind_ips = str_bind_ips + `${networkInfo[i]['bind'][keys[k]]}<br>`;
+                    }
+            }
+            console.log(`str_bind_ips: ${str_bind_ips}`);
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class=bind_ips>${str_bind_ips}</span>`); 
+            
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_ip">${networkInfo[i]['adminip']}</span>`);           
+            arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="admin_port">${networkInfo[i]['adminport']}</span>`); 
             arrayRelayDivs[i].insertAdjacentHTML("beforeend", `<span class="in_use">In Use</span>`);                
             
             button_id = "svg_trash_can_button" + i;
@@ -408,7 +522,7 @@ function renderRelaysTable(networkInfo){
                 alert('Icon clicked!');
             });*/
             console.log("button_id:", button_id);
-            document.getElementById(button_id).addEventListener("dblclick", handleRelayActionButtonClick);            
+            document.getElementById(button_id).addEventListener("dblclick", (event) => handleRelayTrashButtonClick(networkName, event));            
 
             arrayRelayDivs[i].insertAdjacentHTML("afterend",`<div class="relays_rectangle_line"></div>`);             
 
@@ -421,36 +535,24 @@ function renderRelaysTable(networkInfo){
     }
 }
 
-/*async function create_relays_table(){
-    console.log("create_relays_table");
-    var jsonData;
+function openModal() {
+    document.getElementById("popupModal").style.display = "block";
+}
 
-    try{
-        const response = await fetch('NetworkInfo', {
-            method: 'POST', // Setting the method to POST
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ 
-                param1: networkName    
-            })
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        else{
-            const data = await response.text();    
-            //console.log("netwk info:", data);
-            jsonData =  JSON.parse(data);
-            console.log("netwk info jsonData", jsonData);
-         }
-        
-    } catch (error) {
-        console.error('Error fetching data in create_networks_table:', error);
-        alert(`"Failed to fetch data " ${error}`);
-    }
+function closeModal() {
+    document.getElementById("popupModal").style.display = "none";
+}
 
-    //renderRelaysTable(relays);
+function submitForm() {
+    const dropdown1 = document.getElementById("dropdown1").value;
+    const dropdown2 = document.getElementById("dropdown2").value;
+    const singleInput = document.getElementById("singleInput").value;
+    const multiInput = document.getElementById("multiInput").value;
 
-}*/
+    relayDropdown = document.getElementById('dropdown1');
+    console.log("relayDropdow:",relayDropdown );
+
+    alert(`Dropdown 1: ${dropdown1}\nDropdown 2: ${dropdown2}\nText: ${singleInput}\nDetails: ${multiInput}`);
+    
+    closeModal();
+}

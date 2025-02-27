@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Relay</title>
+    <style>
+        /* Modal Background */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: white;
+            width: 40%;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Input fields */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        /* Buttons */
+        .button-group {
+            text-align: right;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .ok-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .cancel-button {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Trigger Button -->
+    <button onclick="openModal()">Open Popup</button>
+
+    <!-- Modal -->
+    <div id="popupModal" class="modal">
+        <div class="modal-content">
+            <h2>Add a Relay</h2>
+
+            <div class="input-group">
+                <label for="dropdown1">Select Region:</label>
+                <select id="dropdown1">
+                    <option value="option1">Option 1</option>
+                    <option value="option2">Option 2</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="dropdown2">Select Relay Server :</label>
+                <select id="dropdown2">
+                    <option value="optionA">Option A</option>
+                    <option value="optionB">Option B</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="singleInput">Enter Custom Name:</label>
+                <input type="text" id="singleInput" placeholder="Enter text...">
+            </div>
+
+            <div class="input-group">
+                <label for="multiInput">Select Bind IPs:</label>
+                <textarea id="multiInput" placeholder="Enter more details..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="ok-button" onclick="submitForm()">OK</button>
+                <button class="cancel-button" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("popupModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("popupModal").style.display = "none";
+        }
+
+        function submitForm() {
+            const dropdown1 = document.getElementById("dropdown1").value;
+            const dropdown2 = document.getElementById("dropdown2").value;
+            const singleInput = document.getElementById("singleInput").value;
+            const multiInput = document.getElementById("multiInput").value;
+
+            alert(`Dropdown 1: ${dropdown1}\nDropdown 2: ${dropdown2}\nText: ${singleInput}\nDetails: ${multiInput}`);
+            
+            closeModal();
+        }
+    </script>
+
+</body>
+</html>
