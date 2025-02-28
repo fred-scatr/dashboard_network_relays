@@ -273,9 +273,13 @@ body {
             margin-bottom: 15px;
         }
         
+        .networkRelaysAVailableTextBox2{
+            height: 100px;
+            width: 275 px;
+        }
         .multi-line-select{
             margin-bottom: 15px;
-            
+            size: 10;
         }        
 
         label {

@@ -87,6 +87,10 @@ async function updateNetworkRelaysAvailableTextBox(){
         // Access the networkRelaysAVailableTextBox
         
         networkRelaysAVailableTextBox = document.getElementById('networkRelaysAVailableTextBox');
+        networkRelaysAVailableTextBox.setAttribute("multiple", true); // or textbox.multiple = true;
+        networkRelaysAVailableTextBox.setAttribute("style", "width: 275px;");
+        networkRelaysAVailableTextBox.size = 10;
+
         console.log("networkRelaysAVailableTextBox: ", networkRelaysAVailableTextBox);   
         if (networkRelaysAVailableTextBox) {
             console.log("1 networkRelaysAVailableTextBox already exists");
@@ -113,6 +117,8 @@ async function updateNetworkRelaysAvailableTextBox(){
         networkRelaysAVailableTextBox.setAttribute("multiple", true); // or textbox.multiple = true;
         networkRelaysAVailableTextBox.setAttribute("style", "width: 200px;");
         networkRelaysAVailableTextBox.size = 10;
+        networkRelaysAVailableTextBox.setAttribute("background-color, red");
+
 
         // Add options to the textbox
         emptyNetworkRelaysTextBox();
