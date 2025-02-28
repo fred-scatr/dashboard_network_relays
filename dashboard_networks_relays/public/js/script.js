@@ -275,25 +275,6 @@ const handleRelayTrashButtonClick = (networkName, event) => {
     }
 };
 
-async function displayRelayPopup(){
-    container = document.getElementById('content')
-    container.innerHTML = `<div id="modal-container"></div>`
-
-    console.log("displayRelayPopup", event.target.id, event);
-    fetch('relay_modal.html') // Load the modal from an external file
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById('modal-container').innerHTML = html;
-        document.getElementById('popupModal').style.display = 'block';
-    })
-    .catch(error => console.error('Error loading modal:', error));
-    //relayActionButtonClicked(event.target.id, event);
-
-    // load popup box options 
-    // load list of networkd
-    
-}
-
 async function networkManageRelaysButtonClicked(networkName, event){
     console.log("networkManageRelaysButtonClicked");
 
@@ -464,9 +445,11 @@ function renderRelaysTable(networkName, networkInfo){
         addRelayButton.id = "addRelayButton";
         addRelayButton.classList.add("add_relay_button");
         addRelayButton.textContent = "Add Relay";
-        addRelayButton.enabled = true;     
+        addRelayButton.enabled = true;    
+        
         container.insertAdjacentElement("beforebegin", addRelayButton); 
         container.insertAdjacentHTML("beforeend", `<br><br><br><br>`);
+        addRelayButton.addEventListener("dblclick",  () => addRelayButtonClicked()); 
         
         let arrayRelayDivs = [];
         let the_trash_can =[];
@@ -533,6 +516,61 @@ function renderRelaysTable(networkName, networkInfo){
     catch(error){
         console.log("Error in renderRelaysTable", error);
     }
+}
+
+async function addRelayButtonClicked(){
+    console.log("addRelayButtonClicked");
+    // bring up popup
+    displayRelayPopup();
+}
+
+async function displayRelayPopup(){
+    console.log("displayRelayPopup");
+    container = document.getElementById('content')
+    container.innerHTML = `<div id="modal-container"></div>`
+
+    fetch('relay_modal.html') // Load the modal from an external file
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text(); // Extract the HTML content as a string
+    })
+    .then(html => {
+        //console.log("Fetched HTML Content:", html);  // Log the fetched HTML to verify
+
+        // Insert the modal HTML into the DOM
+        let container = document.createElement("div");
+        container.innerHTML = html;
+        document.body.appendChild(container);
+
+        // Ensure the modal is visible after the HTML is inserted
+        let modal = document.getElementById("modal-overlay");
+        if (modal) {
+            modal.style.display = "block";  // Make the modal visible
+            console.log("✅ Modal is now visible!");
+
+            // Now, load modal.js and call the setupEventListeners function
+            let script = document.createElement("script");
+            script.src = "/js/modal.js";  // Path to the modal.js script
+            script.onload = () => {
+                console.log("modal.js loaded and executed!");
+                // After modal.js is loaded, call setupEventListeners
+                if (typeof setupEventListeners === 'function') {
+                    setupEventListeners();  // Call the function to setup listeners
+                } else {
+                    console.error("❌ setupEventListeners function is not available.");
+                }
+            };
+            document.body.appendChild(script);
+        } else {
+            console.error("❌ Modal element not found after insertion!");
+        }
+    })
+    .catch(error => console.error("❌ Error fetching modal.html:", error));
+
+        
+
 }
 
 function openModal() {

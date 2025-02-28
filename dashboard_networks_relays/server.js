@@ -15,6 +15,20 @@ app.use((req, res, next) => {
 const port = 3100;
 app.use(express.json());
 
+function sendCmdToSystem(cmd, callback) {  // callback instead of async
+    exec(cmd, { timeout: 4000 },(error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return callback(`Error: ${error.message}`);
+        }
+        if (stderr) {
+            console.error(`Stderr: ${stderr}`);
+            return callback(`Stderr: ${stderr}`);
+        }
+        callback(stdout);
+    });
+}
+
 app.get('/', (req, res) => {
     console.log("dirname = ", __dirname)
     console.log("get first page")
@@ -95,6 +109,45 @@ app.post('/NetworkInfo', async(req, res) => {  // get info and relays for this n
       }
 
 });  
+
+app.post('/RelayServerIps',  (req, res) => {
+    postDataParam1 = req.body.param1; // This will be an object with the keys and values sent by the client
+
+    console.log('Received POST data:',  req.body);  // has the region in it
+
+    strval = `python3 /home/ubuntu/scatr_relay_db/scatr_relays_db.py query name ${postDataParam1}`;
+    console.log('strval: ', strval);  
+
+    sendCmdToSystem(strval, (output) => {
+        const fixedOptions = output.replace(/'/g, '"');
+        console.log("retrieved data", fixedOptions);
+        res.send(`${fixedOptions}`);
+    });
+
+});
+
+app.post('/RelayNamesOnly',  (req, res) => {
+    postDataParam1 = req.body.param1; // This will be an object with the keys and values sent by the client
+
+    console.log('Received POST data:',  req.body);  // has the region in it
+
+    strval = `python3 /home/ubuntu/scatr_relay_db/scatr_relays_db.py query name ${postDataParam1}`;
+    console.log('strval: ', strval);  
+
+    sendCmdToSystem(strval, (output) => {
+        console.log("retrieved data", output);
+        let formattedOutput = [];
+        output = output.split('\n');
+        len = output.length;
+        for(let i=0;i<len;i++){
+            formattedOutput.push(output[i].split(':')[0].trim());
+        }
+        formattedOutput = formattedOutput[0].replace(/'/g, '"');
+        console.log("formattedOutput:", formattedOutput);
+        res.send(`${formattedOutput}`);
+    });
+
+});
 
 app.post('/deleteRelayIndex', async (req, res) => {  // use networkName and list of relays to allocate by writing to SQL DB
     // find the index of the network relay and delete it, given the network name and the label
@@ -214,7 +267,6 @@ app.post('/deleteRelayIndex', async (req, res) => {  // use networkName and list
     }
 
 });
-
 
 
 app.use(express.static(path.join(__dirname, 'public')));

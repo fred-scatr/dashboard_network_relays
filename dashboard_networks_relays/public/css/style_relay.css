@@ -272,6 +272,11 @@ body {
         .input-group {
             margin-bottom: 15px;
         }
+        
+        .multi-line-select{
+            margin-bottom: 15px;
+            
+        }        
 
         label {
             font-weight: bold;
